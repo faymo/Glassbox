@@ -30,23 +30,23 @@ const configurationViews = {
           {
             type: "GET",
             workflowId: `wf_${shortId}`,
-            nodeId: `get_${shortId}`,
-            description: `Data retrieval for ${formData.description || 'agent'}`,
-            url: `https://api.backend.com/data/${shortId}`,
-            authToken: `tok_${shortId}`,
-            parameters: [`p_${shortId}`],
-            searchParams: { agentId: shortId }
+            nodeId: `get_covid_data`,
+            description: `Data retrieval for ${formData.description || 'pubic Covid DATA'}`,
+            url: `https://disease.sh/v3/covid-19/all`,
+            authToken: ``,
+            parameters: [],
+            searchParams: {}
           },
           {
             type: "Decision",
             workflowId: `wf_${shortId}`,
-            nodeId: formData.nodeId || `agent_${shortId}`,
-            systemPrompt: formData.systemPrompt || "You are an AI assistant.",
-            description: formData.description || "Analyze data and provide insights.",
-            model: `model_${shortId}`,
-            apiKey: formData.apiKey || `key_${shortId}`,
-            prompt: formData.prompt || "Analyze the provided data.",
-            functionList: [`get_${shortId}`, `mem_${shortId}`]
+            nodeId: formData.nodeId || `scraper`,
+            systemPrompt: formData.systemPrompt || "You are a public health researcher.",
+            description: formData.description || "Analyze public COVID Data and Returns a report of it.",
+            model: `gemini-2.0-flash`,
+            apiKey: formData.apiKey || `apiKey`,
+            prompt: formData.prompt || "Analyze public health data and return a report of it.",
+            functionList: [`get_covid_data`, `retrieve_memories`]
           }
         ]
       };
@@ -85,6 +85,54 @@ export default function Configuration({ selectedBlock }) {
   const [activeSubTab, setActiveSubTab] = useState(null);
   const [formData, setFormData] = useState({});
   const [additionalFields, setAdditionalFields] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Submit agent configuration to API
+  const handleSubmitAgent = async () => {
+    if (blockType !== 'agent' || !config?.generateJSON) return;
+
+    setIsSubmitting(true);
+
+    try {
+      const jsonData = config.generateJSON(formData, selectedBlock?.id);
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+      if (!apiUrl) {
+        console.error('Agent API URL not configured. Please set NEXT_PUBLIC_API_URL in your .env.local file.');
+        alert('Agent API URL not configured. Please check your environment variables.');
+        return;
+      }
+
+      console.log('Sending agent configuration:', jsonData);
+      console.log(jsonData.NodeConfiguration)
+
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(jsonData),
+      });
+
+      const result = await response.json();
+
+      console.log('Agent API Response:', result);
+      console.log('Response Status:', response.status);
+      console.log('Response Headers:', Object.fromEntries(response.headers));
+
+      if (response.ok) {
+        alert('Agent configuration submitted successfully! Check console for details.');
+      } else {
+        console.error('API Error:', result);
+        alert(`Error submitting agent configuration: ${result.message || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error('Network Error:', error);
+      alert(`Network error: ${error.message}`);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const handleInputChange = (key, value) => {
     setFormData(prev => ({ ...prev, [key]: value }));
@@ -172,13 +220,18 @@ export default function Configuration({ selectedBlock }) {
           />
         );
       default:
+        // Special handling for API Key field
+        const placeholder = field.key === 'apiKey'
+          ? 'Enter API key'
+          : `Enter ${field.label.toLowerCase()}`;
+
         return (
           <input
-            type="text"
+            type={field.key === 'apiKey' ? 'password' : 'text'}
             value={value}
             onChange={(e) => handleInputChange(field.key, e.target.value)}
             className="w-full h-10 bg-stone-900 rounded-md px-3 text-white text-sm focus:outline-none focus:ring-1 focus:ring-violet-500"
-            placeholder={`Enter ${field.label.toLowerCase()}`}
+            placeholder={placeholder}
           />
         );
     }
@@ -329,6 +382,31 @@ export default function Configuration({ selectedBlock }) {
                           className="w-full h-10 bg-stone-800 hover:bg-stone-700 rounded-md text-zinc-400 text-sm font-medium transition-colors border border-dashed border-zinc-600"
                         >
                           + Add More
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Submit Button for Agent Block */}
+                    {blockType === 'agent' && (
+                      <div className="mt-6 pt-4 border-t border-zinc-800">
+                        <button
+                          onClick={handleSubmitAgent}
+                          disabled={isSubmitting}
+                          className="w-full h-12 bg-violet-600 hover:bg-violet-700 disabled:bg-violet-800 disabled:cursor-not-allowed rounded-md text-white text-sm font-semibold transition-colors flex items-center justify-center gap-2"
+                        >
+                          {isSubmitting ? (
+                            <>
+                              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                              Submitting Agent...
+                            </>
+                          ) : (
+                            <>
+                              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M8 0V1.5H14.5V8H16V1.5C16 0.675 15.325 0 14.5 0H8ZM0 14.5V8H1.5V14.5H8V16H1.5C0.675 16 0 15.325 0 14.5ZM12 4L8 8L12 12V9H16V7H12V4Z" fill="white"/>
+                              </svg>
+                              Submit Agent Configuration
+                            </>
+                          )}
                         </button>
                       </div>
                     )}
