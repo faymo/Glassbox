@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import BlocksSidebar from '@/components/BlocksSidebar';
 import WorkflowCanvas from '@/components/WorkflowCanvas';
-import AIAssistant from '@/components/AIAssistant';
+import Configuration from '@/components/Configuration';
 
 export default function WorkflowBuilder() {
   const [blocks, setBlocks] = useState([]);
@@ -62,8 +62,8 @@ export default function WorkflowBuilder() {
         </div>
       </div>
       
-      {/* Right Sidebar - AI Assistant */}
-      <AIAssistant />
+      {/* Right Sidebar - Configuration */}
+      <Configuration selectedBlock={selectedBlock} />
     </div>
   );
 }

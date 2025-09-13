@@ -5,6 +5,8 @@ import IconLibrary from '@/components/icons/IconLibrary';
 
 export default function WorkflowCanvas({ blocks, setBlocks, selectedBlock, setSelectedBlock }) {
   const [dragOver, setDragOver] = useState(false);
+  const [draggedBlock, setDraggedBlock] = useState(null);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -47,6 +49,42 @@ export default function WorkflowCanvas({ blocks, setBlocks, selectedBlock, setSe
     })));
   };
 
+  const handleBlockMouseDown = (e, block) => {
+    e.stopPropagation();
+    const rect = e.currentTarget.getBoundingClientRect();
+    const canvasRect = e.currentTarget.parentElement.getBoundingClientRect();
+
+    setDraggedBlock(block);
+    setDragOffset({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    });
+
+    // Select the block being dragged
+    handleBlockClick(block);
+  };
+
+  const handleMouseMove = (e) => {
+    if (draggedBlock) {
+      e.preventDefault();
+      const rect = e.currentTarget.getBoundingClientRect();
+      const newX = e.clientX - rect.left - dragOffset.x;
+      const newY = e.clientY - rect.top - dragOffset.y;
+
+      // Update the dragged block's position
+      setBlocks(blocks.map(b =>
+        b.id === draggedBlock.id
+          ? { ...b, x: Math.max(0, newX), y: Math.max(0, newY) }
+          : b
+      ));
+    }
+  };
+
+  const handleMouseUp = () => {
+    setDraggedBlock(null);
+    setDragOffset({ x: 0, y: 0 });
+  };
+
 
   return (
     <div
@@ -56,6 +94,9 @@ export default function WorkflowCanvas({ blocks, setBlocks, selectedBlock, setSe
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
     >
       {/* Canvas Grid Background */}
       <div className="absolute inset-0 opacity-5">
@@ -73,16 +114,19 @@ export default function WorkflowCanvas({ blocks, setBlocks, selectedBlock, setSe
       {blocks.map((block) => (
         <div
           key={block.id}
-          className={`absolute w-80 h-24 bg-neutral-900 rounded-lg shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] outline outline-offset-[-1px] cursor-pointer transition-all ${
-            block.selected
-              ? 'outline-violet-500 shadow-lg shadow-violet-500/20'
-              : 'outline-zinc-800 hover:outline-zinc-600'
+          className={`absolute w-80 h-24 bg-neutral-900 rounded-lg shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] outline outline-offset-[-1px] cursor-pointer transition-all select-none ${
+            draggedBlock?.id === block.id
+              ? 'cursor-grabbing shadow-xl shadow-violet-500/30 outline-violet-400 z-50'
+              : block.selected
+              ? 'outline-violet-500 shadow-lg shadow-violet-500/20 cursor-grab'
+              : 'outline-zinc-800 hover:outline-zinc-600 cursor-grab'
           }`}
           style={{
             left: `${block.x}px`,
             top: `${block.y}px`,
           }}
           onClick={() => handleBlockClick(block)}
+          onMouseDown={(e) => handleBlockMouseDown(e, block)}
         >
           <div className="flex items-center gap-4 p-4 h-full">
             {/* Icon */}
@@ -93,13 +137,13 @@ export default function WorkflowCanvas({ blocks, setBlocks, selectedBlock, setSe
             {/* Content */}
             <div className="flex-1 flex flex-col gap-2">
               {/* Title */}
-              <div className="text-white text-sm font-medium font-['Inter'] leading-tight">
+              <div className="text-white text-sm font-medium font-lexend leading-tight">
                 {block.title}
               </div>
 
               {/* Description Bar */}
-              <div className="bg-stone-900 rounded shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] px-3 py-1">
-                <div className="text-zinc-400 text-xs font-medium font-['Inter'] leading-tight">
+              <div className="bg-stone-900 rounded shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] py-1">
+                <div className="text-zinc-400 text-xs font-medium font-lexend leading-tight">
                   {block.description}
                 </div>
               </div>
