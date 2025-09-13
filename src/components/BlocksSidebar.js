@@ -139,9 +139,9 @@ export default function BlocksSidebar() {
             </div>
           </div>
 
-          {/* Output Category */}
+          {/* Tools Category */}
           <div>
-            <h3 className="text-white text-sm font-semibold mb-4">Output</h3>
+            <h3 className="text-white text-sm font-semibold mb-4">Tools</h3>
             <div className="space-y-3">
               {getCategoryBlocks('output').map((block) => (
                 <div

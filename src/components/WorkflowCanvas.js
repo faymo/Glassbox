@@ -169,24 +169,64 @@ export default function WorkflowCanvas({ blocks, setBlocks, selectedBlock, setSe
 
       {/* Connection Lines */}
       <svg className="absolute inset-0 pointer-events-none" style={{ zIndex: 1 }}>
-        {blocks.map((block, index) => {
-          if (index < blocks.length - 1) {
-            const nextBlock = blocks[index + 1];
-            return (
-              <line
-                key={`connection-${block.id}`}
-                x1={block.x + 160}
-                y1={block.y + 48}
-                x2={nextBlock.x + 160}
-                y2={nextBlock.y + 48}
-                stroke="#6b7280"
-                strokeWidth="2"
-                markerEnd="url(#arrowhead)"
-              />
-            );
-          }
-          return null;
-        })}
+        {blocks.length > 1 && (() => {
+          // Sort blocks by workflow order (left to right, then top to bottom)
+          const sortedBlocks = [...blocks].sort((a, b) => {
+            // Primary sort: left to right (x position)
+            const xDiff = a.x - b.x;
+            if (Math.abs(xDiff) > 50) { // If blocks are not roughly vertically aligned
+              return xDiff;
+            }
+            // Secondary sort: top to bottom (y position)
+            return a.y - b.y;
+          });
+
+          // Generate connections between consecutive blocks
+          return sortedBlocks.map((block, index) => {
+            if (index < sortedBlocks.length - 1) {
+              const nextBlock = sortedBlocks[index + 1];
+
+              // Calculate connection points (bottom of current block to top of next block)
+              const x1 = block.x + 160;     // Block width is 320px, so center is at 160px
+              const y1 = block.y + 96;      // Block height is 96px, so bottom is at 96px
+              const x2 = nextBlock.x + 160; // Next block center horizontally
+              const y2 = nextBlock.y;       // Top of next block
+
+              return (
+                <g key={`connection-${block.id}-to-${nextBlock.id}`}>
+                  {/* Main connection line */}
+                  <line
+                    x1={x1}
+                    y1={y1}
+                    x2={x2}
+                    y2={y2}
+                    stroke="#6b7280"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    markerEnd="url(#arrowhead)"
+                  />
+
+                  {/* Optional: Add connection points for visual feedback */}
+                  <circle
+                    cx={x1}
+                    cy={y1}
+                    r="3"
+                    fill="#6b7280"
+                    opacity="0.6"
+                  />
+                  <circle
+                    cx={x2}
+                    cy={y2}
+                    r="3"
+                    fill="#6b7280"
+                    opacity="0.6"
+                  />
+                </g>
+              );
+            }
+            return null;
+          }).filter(Boolean); // Remove null values
+        })()}
         
         {/* Arrow marker definition */}
         <defs>

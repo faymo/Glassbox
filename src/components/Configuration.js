@@ -80,12 +80,39 @@ const configurationViews = {
   }
 };
 
-export default function Configuration({ selectedBlock }) {
+export default function Configuration({ selectedBlock, createdRepoName, blocks }) {
   const [activeTab, setActiveTab] = useState('Configure');
   const [activeSubTab, setActiveSubTab] = useState(null);
   const [formData, setFormData] = useState({});
   const [additionalFields, setAdditionalFields] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Determine file path based on block combination
+  const getFilePath = () => {
+    if (!blocks || blocks.length === 0) return 'requirements.txt';
+
+    const hasAgent = blocks.some(block =>
+      getBlockType({ type: block.type, title: block.title }) === 'agent'
+    );
+
+    const hasToolBlock = blocks.some(block => {
+      const blockType = getBlockType({ type: block.type, title: block.title });
+      return blockType === 'output' ||
+             block.title?.toLowerCase().includes('email') ||
+             block.title?.toLowerCase().includes('tool') ||
+             block.title?.toLowerCase().includes('send') ||
+             block.title?.toLowerCase().includes('create') ||
+             block.title?.toLowerCase().includes('update');
+    });
+
+    // If there's an agent + any tool block, use service/nodeId.py
+    if (hasAgent && hasToolBlock) {
+      const nodeId = formData.nodeId || selectedBlock?.id || 'agent';
+      return `service/${nodeId}.py`;
+    }
+
+    return 'requirements.txt';
+  };
 
   // Submit agent configuration to API
   const handleSubmitAgent = async () => {
@@ -96,17 +123,25 @@ export default function Configuration({ selectedBlock }) {
     try {
       const jsonData = config.generateJSON(formData, selectedBlock?.id);
       const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+      const codeDeployUrl = process.env.NEXT_PUBLIC_CODE_DEPLOY_API_URL;
 
       if (!apiUrl) {
-        console.error('Agent API URL not configured. Please set NEXT_PUBLIC_API_URL in your .env.local file.');
         alert('Agent API URL not configured. Please check your environment variables.');
         return;
       }
 
-      console.log('Sending agent configuration:', jsonData);
-      console.log(jsonData.NodeConfiguration)
+      if (!codeDeployUrl) {
+        alert('Code deploy API URL not configured. Please check your environment variables.');
+        return;
+      }
 
-      const response = await fetch(apiUrl, {
+      if (!createdRepoName) {
+        alert('Please create a repository first using the "Create Repo" button.');
+        return;
+      }
+
+      // First API call - Submit agent configuration
+      const agentResponse = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           "Content-Type": "application/json"
@@ -114,20 +149,34 @@ export default function Configuration({ selectedBlock }) {
         body: JSON.stringify(jsonData),
       });
 
-      const result = await response.json();
+      const agentResult = await agentResponse.json();
+      if (agentResponse.ok) {
+        // Second API call - Deploy code with agent result
+        const deployResponse = await fetch(codeDeployUrl, {
+          method: 'POST',
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            code: agentResult || "",
+            commitMessage: "initial commit",
+            path: getFilePath(),
+            repoName: createdRepoName,
+            githubUser: "BaronLiu1993"
+          }),
+        });
 
-      console.log('Agent API Response:', result);
-      console.log('Response Status:', response.status);
-      console.log('Response Headers:', Object.fromEntries(response.headers));
+        const deployResult = await deployResponse.json();
 
-      if (response.ok) {
-        alert('Agent configuration submitted successfully! Check console for details.');
+        if (deployResponse.ok) {
+          alert('Agent configuration submitted and code deployed successfully!');
+        } else {
+          alert(`Error deploying code: ${deployResult.message || 'Unknown error'}`);
+        }
       } else {
-        console.error('API Error:', result);
-        alert(`Error submitting agent configuration: ${result.message || 'Unknown error'}`);
+        alert(`Error submitting agent configuration: ${agentResult.message || 'Unknown error'}`);
       }
     } catch (error) {
-      console.error('Network Error:', error);
       alert(`Network error: ${error.message}`);
     } finally {
       setIsSubmitting(false);
@@ -152,10 +201,30 @@ export default function Configuration({ selectedBlock }) {
 
   const getBlockType = (block) => {
     if (!block) return null;
-    const blockType = block.type || block.title?.toLowerCase();
-    if (blockType?.includes('start')) return 'start';
-    if (blockType?.includes('agent') || blockType?.includes('ai')) return 'agent';
-    if (blockType?.includes('output') || blockType?.includes('email') || blockType?.includes('report') || blockType?.includes('database') || blockType?.includes('ticket')) return 'output';
+    const blockType = block.type || block.title?.toLowerCase() || '';
+
+    // Check for output/tool blocks first (more specific)
+    if (blockType.includes('email') ||
+        blockType.includes('output') ||
+        blockType.includes('report') ||
+        blockType.includes('database') ||
+        blockType.includes('ticket') ||
+        blockType.includes('send') ||
+        blockType.includes('create') ||
+        blockType.includes('update')) {
+      return 'output';
+    }
+
+    // Check for agent blocks
+    if (blockType.includes('agent') || blockType.includes('ai')) {
+      return 'agent';
+    }
+
+    // Check for start blocks
+    if (blockType.includes('start')) {
+      return 'start';
+    }
+
     return 'start'; // default
   };
 

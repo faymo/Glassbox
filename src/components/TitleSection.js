@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-export default function TitleSection() {
+export default function TitleSection({ onRepoCreated }) {
   const [repoName, setRepoName] = useState('');
   const [isCreatingRepo, setIsCreatingRepo] = useState(false);
 
@@ -44,6 +44,10 @@ export default function TitleSection() {
 
       if (response.ok) {
         alert(`Repository "${repoName.trim()}" created successfully! Check console for details.`);
+        // Extract just the repo name part from 'Baronliu1993/reponame' format
+        const fullRepoPath = result.data || result.name || `Baronliu1993/${repoName.trim()}`;
+        const justRepoName = fullRepoPath.includes('/') ? fullRepoPath.split('/')[1] : fullRepoPath;
+        onRepoCreated && onRepoCreated(justRepoName); // Pass just repo name to parent
         setRepoName(''); // Clear input after successful creation
       } else {
         console.error('API Error:', result);
