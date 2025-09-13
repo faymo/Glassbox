@@ -2,7 +2,82 @@
 
 import Link from 'next/link';
 
-export default function WorkflowHeader() {
+export default function WorkflowHeader({ blocks }) {
+  const handlePublish = async () => {
+    try {
+      const generateMainLayerUrl = process.env.NEXT_PUBLIC_GENERATE_MAIN_LAYER_URL;
+
+      if (!generateMainLayerUrl) {
+        alert('Generate Main Layer API URL not configured. Please check your environment variables.');
+        return;
+      }
+
+      // Filter only agent blocks and sort them using the same logic as connection lines
+      const agentBlocks = blocks.filter(block =>
+        block.category === 'agents' ||
+        (block.category === 'tools' && ['Web Research', 'Email'].includes(block.title))
+      );
+
+      if (agentBlocks.length === 0) {
+        alert('No agent blocks found in the workflow.');
+        return;
+      }
+
+      // Sort blocks by workflow order (left to right, then top to bottom)
+      const sortedAgentBlocks = [...agentBlocks].sort((a, b) => {
+        // Primary sort: left to right (x position)
+        const xDiff = a.x - b.x;
+        if (Math.abs(xDiff) > 50) { // If blocks are not roughly vertically aligned
+          return xDiff;
+        }
+        // Secondary sort: top to bottom (y position)
+        return a.y - b.y;
+      });
+
+      // Extract nodeIds for routers
+      const routers = sortedAgentBlocks.map(block => block.nodeId || block.id);
+
+      // Create functions array with proper chaining
+      const functions = sortedAgentBlocks.map((block, index) => {
+        const isFirstFunction = index === 0;
+        const isLastFunction = index === sortedAgentBlocks.length - 1;
+
+        return {
+          variable: isLastFunction ? `variable${index + 1}` : `variable${index + 1}`,
+          name: block.nodeId || block.id,
+          parameter: isFirstFunction ? "initialInput" : `variable${index}`
+        };
+      });
+
+      const payload = {
+        routers,
+        functions
+      };
+
+      console.log('Publishing workflow with payload:', payload);
+
+      const response = await fetch(generateMainLayerUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert('Workflow published successfully!');
+        console.log('Publish result:', result);
+      } else {
+        alert(`Error publishing workflow: ${result.message || 'Unknown error'}`);
+        console.error('Publish error:', result);
+      }
+    } catch (error) {
+      alert(`Network error: ${error.message}`);
+      console.error('Publish network error:', error);
+    }
+  };
   return (
     <div className="w-full h-16 bg-neutral-900 border-b border-zinc-800 flex items-center justify-between px-4">
       {/* Logo */}
@@ -34,7 +109,10 @@ export default function WorkflowHeader() {
         </button>
         
         {/* Publish Button */}
-        <button className="w-28 h-9 bg-violet-600 rounded-md flex items-center gap-2 px-4 hover:bg-violet-700 transition-colors">
+        <button
+          onClick={handlePublish}
+          className="w-28 h-9 bg-violet-600 rounded-md flex items-center gap-2 px-4 hover:bg-violet-700 transition-colors"
+        >
           <svg width="10" height="11" viewBox="0 0 10 11" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M0 0V1.375H9.625V0H0ZM0 6.875H2.75V11H6.875V6.875H9.625L4.8125 2.0625L0 6.875Z" fill="white"/>
           </svg>

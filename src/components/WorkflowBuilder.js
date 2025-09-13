@@ -5,8 +5,7 @@ import BlocksSidebar from '@/components/BlocksSidebar';
 import WorkflowCanvas from '@/components/WorkflowCanvas';
 import Configuration from '@/components/Configuration';
 
-export default function WorkflowBuilder({ createdRepoName }) {
-  const [blocks, setBlocks] = useState([]);
+export default function WorkflowBuilder({ createdRepoName, blocks, setBlocks }) {
   const [selectedBlock, setSelectedBlock] = useState(null);
 
   return (
