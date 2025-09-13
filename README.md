@@ -1,36 +1,88 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# AI Agent Infrastructure Platform
+
+A modern web application built with Next.js 15 for deploying, managing, and scaling AI agents with enterprise-grade infrastructure.
+
+## Features
+
+- **Server-Side Rendering (SSR)**: Built with Next.js App Router for optimal performance
+- **Modern UI**: Clean, responsive design with Tailwind CSS
+- **Component Architecture**: Reusable components for scalability
+- **Enterprise Focus**: Designed for AI agent infrastructure at scale
+
+## Tech Stack
+
+- **Framework**: Next.js 15 with App Router
+- **Styling**: Tailwind CSS 4
+- **Fonts**: Geist Sans & Geist Mono
+- **Language**: JavaScript (ES6+)
+
+## Project Structure
+
+```
+src/
+├── app/
+│   ├── globals.css          # Global styles and Tailwind imports
+│   ├── layout.js            # Root layout with metadata
+│   └── page.js              # Homepage (server component)
+└── components/
+    └── Navigation.js        # Navigation component (client component)
+```
 
 ## Getting Started
 
-First, run the development server:
-
+1. Install dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Run the development server:
+```bash
+npm run dev
+```
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+3. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Key Features
 
-## Learn More
+### Homepage
+- Hero section with compelling value proposition
+- Feature grid showcasing platform capabilities
+- Call-to-action sections
+- Professional footer with navigation links
 
-To learn more about Next.js, take a look at the following resources:
+### Navigation
+- Responsive navigation bar
+- Mobile-friendly hamburger menu
+- Clean, modern design
+- Accessible focus states
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Styling
+- Custom CSS variables for theming
+- Smooth scrolling and animations
+- Custom scrollbar styling
+- Accessibility-focused focus states
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Server-Side Rendering
 
-## Deploy on Vercel
+The homepage is built as a server component, which means:
+- HTML is generated on the server
+- Faster initial page loads
+- Better SEO performance
+- Reduced client-side JavaScript
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Development
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The app uses Next.js 15 with the App Router, providing:
+- File-based routing
+- Server and client components
+- Built-in optimization
+- Modern React features
+
+## Next Steps
+
+This foundation provides a solid starting point for building out:
+- Agent management pages
+- Infrastructure monitoring
+- User authentication
+- API integrations
+- Dashboard components
