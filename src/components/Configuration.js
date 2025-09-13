@@ -111,10 +111,10 @@ export default function Configuration({ selectedBlock, createdRepoName, blocks }
       return `service/${nodeId}.py`;
     }
 
-    return 'requirements.txt';
+    return 'main.py';
   };
 
-  // Submit agent configuration to API
+// Submit agent configuration to API
   const handleSubmitAgent = async () => {
     if (blockType !== 'agent' || !config?.generateJSON) return;
 

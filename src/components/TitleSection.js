@@ -5,6 +5,8 @@ import { useState } from 'react';
 export default function TitleSection({ onRepoCreated }) {
   const [repoName, setRepoName] = useState('');
   const [isCreatingRepo, setIsCreatingRepo] = useState(false);
+  const [isSettingKey, setIsSettingKey] = useState(false);
+  const [createdRepoName, setCreatedRepoName] = useState('');
 
   // Create repository function
   const handleCreateRepo = async () => {
@@ -47,6 +49,7 @@ export default function TitleSection({ onRepoCreated }) {
         // Extract just the repo name part from 'Baronliu1993/reponame' format
         const fullRepoPath = result.data || result.name || `Baronliu1993/${repoName.trim()}`;
         const justRepoName = fullRepoPath.includes('/') ? fullRepoPath.split('/')[1] : fullRepoPath;
+        setCreatedRepoName(justRepoName); // Store locally for deploy key
         onRepoCreated && onRepoCreated(justRepoName); // Pass just repo name to parent
         setRepoName(''); // Clear input after successful creation
       } else {
@@ -58,6 +61,72 @@ export default function TitleSection({ onRepoCreated }) {
       alert(`Network error: ${error.message}`);
     } finally {
       setIsCreatingRepo(false);
+    }
+  };
+
+  // Set deployment key and droplet IP for repository
+  const handleSetDeployKey = async () => {
+    setIsSettingKey(true);
+
+    try {
+      const setKeyApiUrl = process.env.NEXT_PUBLIC_SET_KEY_API_URL;
+      const deployKeyValue = process.env.NEXT_PUBLIC_DEPLOY_KEY_VALUE;
+      const dropletIpValue = process.env.NEXT_PUBLIC_DROPLET_IP_VALUE;
+
+      if (!setKeyApiUrl) {
+        alert('Set Key API URL not configured. Please check your environment variables.');
+        return;
+      }
+
+      if (!deployKeyValue || !dropletIpValue) {
+        alert('Deploy Key Value or Droplet IP Value not configured. Please check your environment variables.');
+        return;
+      }
+
+      // Set DEPLOY_KEY
+      const deployKeyResponse = await fetch(setKeyApiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          repo: createdRepoName,
+          keyValue: deployKeyValue,
+          keyName: "DEPLOY_KEY"
+        }),
+      });
+
+      const deployKeyResult = await deployKeyResponse.json();
+
+      if (!deployKeyResponse.ok) {
+        alert(`Error setting deploy key: ${deployKeyResult.message || 'Unknown error'}`);
+        return;
+      }
+
+      // Set DROPLET_IP
+      const dropletIpResponse = await fetch(setKeyApiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          repo: createdRepoName,
+          keyValue: dropletIpValue,
+          keyName: "DROPLET_IP"
+        }),
+      });
+
+      const dropletIpResult = await dropletIpResponse.json();
+
+      if (dropletIpResponse.ok) {
+        alert('Deploy key and droplet IP set successfully!');
+      } else {
+        alert(`Error setting droplet IP: ${dropletIpResult.message || 'Unknown error'}`);
+      }
+    } catch (error) {
+      alert(`Network error: ${error.message}`);
+    } finally {
+      setIsSettingKey(false);
     }
   };
 
@@ -96,6 +165,27 @@ export default function TitleSection({ onRepoCreated }) {
                 <path d="M6 0C2.7 0 0 2.7 0 6C0 9.3 2.7 12 6 12C9.3 12 12 9.3 12 6C12 2.7 9.3 0 6 0ZM9 6.6H6.6V9H5.4V6.6H3V5.4H5.4V3H6.6V5.4H9V6.6Z" fill="white"/>
               </svg>
               <span className="text-white text-sm font-medium">Create Repo</span>
+            </>
+          )}
+        </button>
+
+        {/* Deploy Key Button */}
+        <button
+          onClick={handleSetDeployKey}
+          disabled={isSettingKey || !createdRepoName}
+          className="w-32 h-9 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 disabled:cursor-not-allowed rounded-md flex items-center gap-2 px-4 transition-colors"
+        >
+          {isSettingKey ? (
+            <>
+              <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <span className="text-white text-sm font-medium">Setting...</span>
+            </>
+          ) : (
+            <>
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 2L6 4L10 8L12 6L8 2ZM4 6L0 10L2 12L6 8L4 6ZM2 2C3.1 2 4 2.9 4 4C4 5.1 3.1 6 2 6C0.9 6 0 5.1 0 4C0 2.9 0.9 2 2 2Z" fill="white"/>
+              </svg>
+              <span className="text-white text-sm font-medium">Deploy Key</span>
             </>
           )}
         </button>
