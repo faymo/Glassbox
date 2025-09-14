@@ -13,10 +13,10 @@ export default function MainContent() {
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Header */}
-      <WorkflowHeader blocks={blocks} />
+      <WorkflowHeader blocks={blocks} createdRepoName={createdRepoName} />
 
       {/* Title Section */}
-      <TitleSection onRepoCreated={setCreatedRepoName} />
+      <TitleSection onRepoCreated={setCreatedRepoName} blocks={blocks} />
 
       {/* Workflow Builder */}
       <div className="flex-1 min-h-0 overflow-hidden">

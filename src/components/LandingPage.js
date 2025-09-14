@@ -174,13 +174,7 @@ export default function LandingPage() {
                     <path d="M2.53857 10.2052C2.53857 8.85874 3.07346 7.5674 4.02557 6.61529C4.97768 5.66318 6.26901 5.1283 7.6155 5.1283C8.86492 5.12957 10.07 5.59151 11.0001 6.42573L12.6924 7.94881" stroke="white" strokeWidth="1.12821" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                 </div>
-                {/* Test and Publish buttons in toolbar */}
-                <button className="w-16 h-7 bg-neutral-800 rounded flex items-center gap-1 px-2 hover:bg-neutral-700 transition-colors ml-4">
-                  <svg width="7" height="9" viewBox="0 0 9 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M0 0V11L8.64286 5.5L0 0Z" fill="white"/>
-                  </svg>
-                  <span className="text-white text-xs font-medium">Test</span>
-                </button>
+                {/* Publish button in toolbar */}
                 <button className="w-20 h-7 bg-violet-600 rounded flex items-center gap-1 px-2 hover:bg-violet-700 transition-colors">
                   <svg width="8" height="9" viewBox="0 0 10 11" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M0 0V1.375H9.625V0H0ZM0 6.875H2.75V11H6.875V6.875H9.625L4.8125 2.0625L0 6.875Z" fill="white"/>

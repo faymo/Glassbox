@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-export default function TitleSection({ onRepoCreated }) {
+export default function TitleSection({ onRepoCreated, blocks = [] }) {
   const [repoName, setRepoName] = useState('');
   const [isCreatingRepo, setIsCreatingRepo] = useState(false);
   const [isSettingKey, setIsSettingKey] = useState(false);
@@ -72,17 +72,36 @@ export default function TitleSection({ onRepoCreated }) {
 
     try {
       const setKeyApiUrl = process.env.NEXT_PUBLIC_SET_KEY_API_URL;
+      const getDropletApiUrl = process.env.NEXT_PUBLIC_GET_DROPLET_API_URL;
       const deployKeyValue = process.env.NEXT_PUBLIC_DEPLOY_KEY_VALUE;
       const dropletIpValue = process.env.NEXT_PUBLIC_DROPLET_IP_VALUE;
 
-      if (!setKeyApiUrl) {
-        alert('Set Key API URL not configured. Please check your environment variables.');
+      if (!setKeyApiUrl || !getDropletApiUrl) {
+        alert('Set Key API URL or Get Droplet API URL not configured. Please check your environment variables.');
         return;
       }
 
       if (!deployKeyValue || !dropletIpValue) {
         alert('Deploy Key Value or Droplet IP Value not configured. Please check your environment variables.');
         return;
+      }
+
+      // First step: Get droplet details if dropletId exists
+      if (dropletId) {
+        console.log('Getting droplet details for ID:', dropletId);
+        
+        const getDropletResponse = await fetch(`${getDropletApiUrl}?dropletId=${dropletId}`, {
+          method: 'GET',
+        });
+
+        const getDropletResult = await getDropletResponse.json();
+
+        console.log('Get Droplet API Response:', getDropletResult);
+
+        if (!getDropletResponse.ok) {
+          alert(`Error getting droplet details: ${getDropletResult.message || 'Unknown error'}`);
+          return;
+        }
       }
 
       // Set DEPLOY_KEY
@@ -152,6 +171,143 @@ export default function TitleSection({ onRepoCreated }) {
 
       console.log('Creating droplet for repository:', createdRepoName);
 
+      const generateMainLayerUrl = process.env.NEXT_PUBLIC_GENERATE_MAIN_LAYER_URL;
+
+      if (!generateMainLayerUrl) {
+        alert('Generate Main Layer API URL not configured. Please check your environment variables.');
+        return;
+      }
+
+      // Filter only agent blocks and sort them using the same logic as connection lines
+      const agentBlocks = blocks.filter(block =>
+        block.category === 'agents' ||
+        (block.category === 'tools' && ['Web Research', 'Email'].includes(block.title))
+      );
+
+      if (agentBlocks.length === 0) {
+        alert('No agent blocks found in the workflow.');
+        return;
+      }
+
+      // Sort blocks by workflow order (left to right, then top to bottom)
+      const sortedAgentBlocks = [...agentBlocks].sort((a, b) => {
+        // Primary sort: left to right (x position)
+        const xDiff = a.x - b.x;
+        if (Math.abs(xDiff) > 50) { // If blocks are not roughly vertically aligned
+          return xDiff;
+        }
+        // Secondary sort: top to bottom (y position)
+        return a.y - b.y;
+      });
+
+      // Extract nodeIds for routers
+      const routers = sortedAgentBlocks.map(block => block.nodeId || block.id);
+      console.log('Routers:', routers);
+      // Create functions array with proper chaining
+      const functions = sortedAgentBlocks.map((block, index) => {
+        const isFirstFunction = index === 0;
+        const isLastFunction = index === sortedAgentBlocks.length - 1;
+
+        return {
+          variable: isLastFunction ? `variable${index + 1}` : `variable${index + 1}`,
+          name: block.nodeId || block.id,
+          parameter: isFirstFunction ? "initialInput" : `variable${index}`
+        };
+      });
+
+      const payload = {
+        routers: ["video", "scraper"],
+        functions: [
+            {variable: "variable", name: "scraper", parameter: "initialInput"},
+            {variable: "variable2", name: "video", parameter: "variable"}
+        ], modality: true
+      };
+
+      console.log('Calling generate-main-layer with payload:', payload);
+
+      // Call generate-main-layer endpoint first
+      const generateResponse = await fetch(generateMainLayerUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const generateResult = await generateResponse.json();
+
+      if (!generateResponse.ok) {
+        alert(`Error calling generate-main-layer: ${generateResult.message || 'Unknown error'}`);
+        console.error('Generate main layer error:', generateResult);
+        return;
+      }
+
+      console.log('Generate main layer result:', generateResult);
+
+      // Call create-file endpoint for main.py
+      const createFileUrl = process.env.NEXT_PUBLIC_CODE_DEPLOY_API_URL;
+      if (!createFileUrl) {
+        alert('Create File API URL not configured. Please check your environment variables.');
+        return;
+      }
+
+      const mainPyPayload = {
+        code: generateResult,
+        commitMessage: "initial commit",
+        path: "main.py",
+        repoName: createdRepoName,
+        githubUser: "BaronLiu1993"
+      };
+
+      console.log('Calling create-file for main.py with payload:', mainPyPayload);
+
+      const mainPyResponse = await fetch(createFileUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(mainPyPayload),
+      });
+
+      const mainPyResult = await mainPyResponse.json();
+
+      if (!mainPyResponse.ok) {
+        alert(`Error creating main.py: ${mainPyResult.message || 'Unknown error'}`);
+        console.error('Main.py creation error:', mainPyResult);
+        return;
+      }
+
+      console.log('Main.py creation result:', mainPyResult);
+
+      // Call create-file endpoint for requirements.txt
+      const requirementsTxtPayload = {
+        code: "fastapi\npydantic\nuvicorn\ncelery\nopenai\ngoogle-genai\nSQLAlchemy\nrequests\npsycopg2-binary\npgvector\n",
+        commitMessage: "initial commit",
+        path: "requirements.txt",
+        repoName: createdRepoName,
+        githubUser: "BaronLiu1993"
+      };
+
+      console.log('Calling create-file for requirements.txt with payload:', requirementsTxtPayload);
+
+      const requirementsTxtResponse = await fetch(createFileUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requirementsTxtPayload),
+      });
+
+      const requirementsTxtResult = await requirementsTxtResponse.json();
+
+      if (!requirementsTxtResponse.ok) {
+        alert(`Error creating requirements.txt: ${requirementsTxtResult.message || 'Unknown error'}`);
+        console.error('Requirements.txt creation error:', requirementsTxtResult);
+        return;
+      }
+
+      console.log('Requirements.txt creation result:', requirementsTxtResult);
+
       const createDropletPayload = {
         name: "HTN",
         userName: "BaronLiu1993",
@@ -175,27 +331,8 @@ export default function TitleSection({ onRepoCreated }) {
       if (response.ok && result.success) {
         console.log('Droplet created successfully, now getting droplet details...');
 
-        // Chain the get-droplet API call
-        const getDropletResponse = await fetch(getDropletApiUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            dropletId: result.dropletId.toString()
-          }),
-        });
-
-        const getDropletResult = await getDropletResponse.json();
-
-        console.log('Get Droplet API Response:', getDropletResult);
-
-        if (getDropletResponse.ok) {
-          setDropletId(result.dropletId.toString());
-          alert(`Droplet created and retrieved successfully! Droplet ID: ${result.dropletId}`);
-        } else {
-          alert(`Droplet created but failed to retrieve details: ${getDropletResult.message || 'Unknown error'}`);
-        }
+        setDropletId(result.dropletId.toString());
+        alert(`Droplet created successfully! Droplet ID: ${result.dropletId}`);
       } else {
         console.error('Create Droplet API Error:', result);
         alert(`Error creating droplet: ${result.message || 'Unknown error'}`);

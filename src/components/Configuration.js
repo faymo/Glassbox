@@ -30,9 +30,9 @@ const configurationViews = {
           {
             type: "GET",
             workflowId: `wf_${shortId}`,
-            nodeId: `get_covid_data`,
-            description: `Data retrieval for ${formData.description || 'pubic Covid DATA'}`,
-            url: `https://disease.sh/v3/covid-19/all`,
+            nodeId: `get_code_documentation`,
+            description: `Data retrieval for ${formData.description || '\"\"\"public code documentation\"\"\"'}`,
+            url: `https://raw.githubusercontent.com/facebook/react/main/README.md`,
             authToken: ``,
             parameters: [],
             searchParams: {}
@@ -41,12 +41,12 @@ const configurationViews = {
             type: "Decision",
             workflowId: `wf_${shortId}`,
             nodeId: formData.nodeId || `scraper`,
-            systemPrompt: formData.systemPrompt || "You are a public health researcher.",
-            description: formData.description || "Analyze public COVID Data and Returns a report of it.",
+            systemPrompt: formData.systemPrompt || "You are a Senior Software Engineer.",
+            description: formData.description || "\"\"\"Analyze raw github code documentation\"\"\"",
             model: `gemini-2.0-flash`,
             apiKey: formData.apiKey || `apiKey`,
-            prompt: formData.prompt || "Analyze public health data and return a report of it.",
-            functionList: [`get_covid_data`, `retrieve_memories`]
+            prompt: formData.prompt || "Analyze public code documentation and return a report of it.",
+            functionList: [`get_code_documentation`, `retrieve_memories`]
           }
         ]
       };
@@ -86,6 +86,7 @@ export default function Configuration({ selectedBlock, createdRepoName, blocks }
   const [formData, setFormData] = useState({});
   const [additionalFields, setAdditionalFields] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [agentConfigurations, setAgentConfigurations] = useState({});
 
   // Determine file path based on block combination
   const getFilePath = () => {
@@ -105,19 +106,48 @@ export default function Configuration({ selectedBlock, createdRepoName, blocks }
              block.title?.toLowerCase().includes('update');
     });
 
-    // If there's an agent + any tool block, use service/nodeId.py
-    if (hasAgent && hasToolBlock) {
-      const nodeId = formData.nodeId || selectedBlock?.id || 'agent';
-      return `service/${nodeId}.py`;
-    }
+    const nodeId = formData.nodeId || selectedBlock?.id || 'agent';
+    return `service/${nodeId}.py`;
+  };
 
-    return 'main.py';
+  // Save agent configuration for the current block
+  const saveAgentConfiguration = () => {
+    if (!selectedBlock?.id || blockType !== 'agent') return;
+    
+    const configKey = selectedBlock.id;
+    setAgentConfigurations(prev => ({
+      ...prev,
+      [configKey]: {
+        formData: { ...formData },
+        blockId: selectedBlock.id,
+        timestamp: Date.now(),
+        jsonConfig: config?.generateJSON ? config.generateJSON(formData, selectedBlock.id) : null
+      }
+    }));
+  };
+
+  // Load agent configuration for the current block
+  const loadAgentConfiguration = () => {
+    if (!selectedBlock?.id || blockType !== 'agent') return;
+    
+    const configKey = selectedBlock.id;
+    const savedConfig = agentConfigurations[configKey];
+    
+    if (savedConfig) {
+      setFormData(savedConfig.formData);
+    } else {
+      // Reset form for new configuration
+      setFormData({});
+    }
   };
 
 // Submit agent configuration to API
   const handleSubmitAgent = async () => {
     if (blockType !== 'agent' || !config?.generateJSON) return;
 
+    // Save configuration before submitting
+    saveAgentConfiguration();
+    
     setIsSubmitting(true);
 
     try {
@@ -185,6 +215,10 @@ export default function Configuration({ selectedBlock, createdRepoName, blocks }
 
   const handleInputChange = (key, value) => {
     setFormData(prev => ({ ...prev, [key]: value }));
+    // Auto-save configuration when user makes changes
+    setTimeout(() => {
+      saveAgentConfiguration();
+    }, 500); // Debounce auto-save
   };
 
   const addField = () => {
@@ -315,6 +349,23 @@ export default function Configuration({ selectedBlock, createdRepoName, blocks }
       setActiveSubTab(config.tabs[0]);
     }
   }, [blockType, config]);
+
+  // Load configuration when block changes
+  useEffect(() => {
+    if (selectedBlock && blockType === 'agent') {
+      loadAgentConfiguration();
+    }
+  }, [selectedBlock?.id, blockType]);
+
+  // Auto-save when form data changes
+  useEffect(() => {
+    if (selectedBlock && blockType === 'agent' && Object.keys(formData).length > 0) {
+      const timeoutId = setTimeout(() => {
+        saveAgentConfiguration();
+      }, 1000);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [formData, selectedBlock?.id, blockType]);
 
   return (
     <div className="w-96 h-full flex flex-col bg-stone-950 border-l border-zinc-800 overflow-hidden">

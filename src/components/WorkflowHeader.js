@@ -3,62 +3,29 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-export default function WorkflowHeader({ blocks, showButtons = true }) {
+export default function WorkflowHeader({ blocks, showButtons = true, createdRepoName }) {
   const router = useRouter();
   const handlePublish = async () => {
     try {
-      const generateMainLayerUrl = process.env.NEXT_PUBLIC_GENERATE_MAIN_LAYER_URL;
+      const configureCiCdUrl = process.env.NEXT_PUBLIC_CONFIGURE_CI_CD_URL;
 
-      if (!generateMainLayerUrl) {
-        alert('Generate Main Layer API URL not configured. Please check your environment variables.');
+      if (!configureCiCdUrl) {
+        alert('Configure CI/CD API URL not configured. Please check your environment variables.');
         return;
       }
 
-      // Filter only agent blocks and sort them using the same logic as connection lines
-      const agentBlocks = blocks.filter(block =>
-        block.category === 'agents' ||
-        (block.category === 'tools' && ['Web Research', 'Email'].includes(block.title))
-      );
-
-      if (agentBlocks.length === 0) {
-        alert('No agent blocks found in the workflow.');
+      if (!createdRepoName) {
+        alert('Please create a repository first before configuring CI/CD.');
         return;
       }
-
-      // Sort blocks by workflow order (left to right, then top to bottom)
-      const sortedAgentBlocks = [...agentBlocks].sort((a, b) => {
-        // Primary sort: left to right (x position)
-        const xDiff = a.x - b.x;
-        if (Math.abs(xDiff) > 50) { // If blocks are not roughly vertically aligned
-          return xDiff;
-        }
-        // Secondary sort: top to bottom (y position)
-        return a.y - b.y;
-      });
-
-      // Extract nodeIds for routers
-      const routers = sortedAgentBlocks.map(block => block.nodeId || block.id);
-
-      // Create functions array with proper chaining
-      const functions = sortedAgentBlocks.map((block, index) => {
-        const isFirstFunction = index === 0;
-        const isLastFunction = index === sortedAgentBlocks.length - 1;
-
-        return {
-          variable: isLastFunction ? `variable${index + 1}` : `variable${index + 1}`,
-          name: block.nodeId || block.id,
-          parameter: isFirstFunction ? "initialInput" : `variable${index}`
-        };
-      });
 
       const payload = {
-        routers,
-        functions
+        repoName: createdRepoName
       };
 
-      console.log('Publishing workflow with payload:', payload);
+      console.log('Configuring CI/CD with payload:', payload);
 
-      const response = await fetch(generateMainLayerUrl, {
+      const response = await fetch(configureCiCdUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -69,15 +36,15 @@ export default function WorkflowHeader({ blocks, showButtons = true }) {
       const result = await response.json();
 
       if (response.ok) {
-        alert('Workflow published successfully!');
-        console.log('Publish result:', result);
+        alert('CI/CD configured successfully!');
+        console.log('Configure CI/CD result:', result);
       } else {
-        alert(`Error publishing workflow: ${result.message || 'Unknown error'}`);
-        console.error('Publish error:', result);
+        alert(`Error configuring CI/CD: ${result.message || 'Unknown error'}`);
+        console.error('Configure CI/CD error:', result);
       }
     } catch (error) {
       alert(`Network error: ${error.message}`);
-      console.error('Publish network error:', error);
+      console.error('Configure CI/CD network error:', error);
     }
   };
   return (
@@ -98,14 +65,6 @@ export default function WorkflowHeader({ blocks, showButtons = true }) {
       {/* Right side buttons - only show if showButtons is true */}
       {showButtons && (
         <div className="flex items-center gap-3">
-          {/* Test Button */}
-          <button className="w-20 h-9 bg-neutral-800 rounded-md flex items-center gap-1 px-4 hover:bg-neutral-700 transition-colors">
-            <svg width="9" height="11" viewBox="0 0 9 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M0 0V11L8.64286 5.5L0 0Z" fill="white"/>
-            </svg>
-            <span className="text-white text-base font-medium">Test</span>
-          </button>
-          
           {/* Publish Button */}
           <button
             onClick={handlePublish}
