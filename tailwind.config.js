@@ -9,6 +9,8 @@ module.exports = {
     extend: {
       fontFamily: {
         'lexend': ['var(--font-lexend)', 'sans-serif'],
+        'inter': ['var(--font-inter)', 'sans-serif'],
+        'sorts-mill-goudy': ['var(--font-sorts-mill-goudy)', 'serif'],
       },
     },
   },
