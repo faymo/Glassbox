@@ -241,7 +241,7 @@ export default function BlocksSidebar() {
           
           {/* Upload area */}
           <div 
-            className="w-80 h-36 left-[18px] top-[146px] absolute bg-neutral-900 rounded-md outline outline-1 outline-offset-[-1px] outline-zinc-800 overflow-hidden cursor-pointer hover:bg-neutral-800 transition-colors"
+            className="w-80 h-36 left-[18px] top-[146px] absolute bg-neutral-900 rounded-md outline outline-offset-[-1px] outline-zinc-800 overflow-hidden cursor-pointer hover:bg-neutral-800 transition-colors"
             onDrop={handleDrop}
             onDragOver={handleDragOver}
             onClick={() => document.getElementById('file-upload').click()}
@@ -252,7 +252,7 @@ export default function BlocksSidebar() {
             <div className="left-[51px] top-[72px] absolute text-center justify-center text-zinc-400 text-xs font-medium font-lexend leading-tight">
               PDF, TXT, or DOCX formats, up to 50 MB
             </div>
-            <div className="w-44 h-7 left-[72px] top-[99px] absolute bg-neutral-800 rounded-md outline outline-1 outline-offset-[-1px] outline-zinc-800 overflow-hidden">
+            <div className="w-44 h-7 left-[72px] top-[99px] absolute bg-neutral-800 rounded-md outline outline-offset-[-1px] outline-zinc-800 overflow-hidden">
               <div className="left-[25px] top-[4px] absolute text-center justify-center text-white text-sm font-medium font-lexend leading-tight">
                 {isUploading ? 'Uploading...' : 'Upload Document'}
               </div>
@@ -275,7 +275,7 @@ export default function BlocksSidebar() {
               <div className="text-white text-sm font-medium font-lexend mb-3">Uploaded Documents</div>
               <div className="space-y-2 max-h-96 overflow-y-auto">
                 {uploadedDocuments.map((doc) => (
-                  <div key={doc.id} className="w-full bg-neutral-900 rounded-md outline outline-1 outline-offset-[-1px] outline-zinc-800 p-3 flex items-center justify-between hover:bg-neutral-800 transition-colors cursor-pointer group">
+                  <div key={doc.id} className="w-full bg-neutral-900 rounded-md outline outline-offset-[-1px] outline-zinc-800 p-3 flex items-center justify-between hover:bg-neutral-800 transition-colors cursor-pointer group">
                     <div 
                       className="flex items-center space-x-3 flex-1 min-w-0"
                       onClick={() => downloadDocument(doc)}

@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import WorkflowHeader from './WorkflowHeader';
-import OverviewHeader from './OverviewHeader';
-import StatsCard from './StatsCard';
-import FlowTable from './FlowTable';
+import WorkflowHeader from '@/components/WorkflowHeader';
+import OverviewHeader from '@/components/OverviewHeader';
+import StatsCard from '@/components/StatsCard';
+import FlowTable from '@/components/FlowTable';
 
-export default function OverviewPage() {
+export default function Overview() {
   const router = useRouter();
   const [stats, setStats] = useState({
     totalFlows: 0,
