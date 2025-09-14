@@ -375,6 +375,144 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
+
+        {/* Product Walkthrough Section */}
+        <div className="w-full h-px mt-24 bg-zinc-800"></div>
+        <div className="mt-16 px-4 md:px-10">
+          <div className="flex items-center mb-16">
+            <div className="w-3.5 h-3.5 bg-violet-600 rounded-full mr-4"></div>
+            <span className="text-neutral-100 text-lg font-medium font-lexend">Product Walkthrough</span>
+          </div>
+        </div>
+
+        {/* Feature Cards Section */}
+        <div className="px-4 md:px-10 flex flex-col lg:flex-row gap-12 mb-24">
+          {/* Seamless No-Code & Code */}
+          <div className="flex-1 bg-stone-950 p-8 rounded-xl border border-zinc-800">
+            <div className="text-neutral-100 text-xl font-semibold font-lexend mb-4">Seamless No-Code & Code</div>
+            <div className="text-zinc-400 text-base font-normal font-lexend leading-relaxed mb-8">Start with drag-and-drop blocks, then switch to code view when you want precision edits.</div>
+            
+            {/* Workflow visualization */}
+            <div className="relative h-80 bg-stone-950 overflow-hidden">
+              <div className="absolute left-[180px] top-[132px] w-80 h-16 bg-neutral-900 rounded-lg shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] border border-zinc-800">
+                <div className="w-7 h-7 left-[36px] top-[18px] absolute bg-gray-900 rounded-md">
+                  <div className="w-2.5 h-3 left-[10px] top-[9px] absolute bg-blue-500"></div>
+                </div>
+                <div className="left-[79px] top-[23px] absolute text-white text-sm font-medium font-inter leading-tight">Start</div>
+              </div>
+              
+              <div className="absolute left-[182px] top-[200px] w-80 h-16 bg-neutral-900 rounded-lg shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] border border-zinc-800">
+                <div className="w-7 h-7 left-[36px] top-[18px] absolute bg-zinc-900 rounded-md">
+                  <div className="w-3.5 h-3 left-[8px] top-[8px] absolute bg-green-500"></div>
+                </div>
+                <div className="left-[79px] top-[23px] absolute text-white text-sm font-medium font-inter leading-tight">Video Creation</div>
+              </div>
+              
+              <div className="absolute left-[181px] top-[268px] w-80 h-16 bg-neutral-900 rounded-lg shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] border border-zinc-800">
+                <div className="w-7 h-7 left-[36px] top-[18px] absolute bg-gray-900 rounded-md">
+                  <div className="w-2.5 h-3 left-[10px] top-[9px] absolute bg-blue-500"></div>
+                </div>
+                <div className="left-[79px] top-[23px] absolute text-white text-sm font-medium font-inter leading-tight">End</div>
+              </div>
+              
+              {/* Vertical line with glow effect */}
+              <div className="absolute left-[357px] top-[111px] w-0 h-80 border-l-[3px] border-violet-600 blur-[10px]"></div>
+              <div className="absolute left-[357px] top-[111px] w-0 h-80 border-l-2 border-stone-900/0"></div>
+            </div>
+          </div>
+
+          {/* Supports Multiple Outputs */}
+          <div className="flex-1 bg-stone-950 p-8 rounded-xl border border-zinc-800">
+            <div className="text-neutral-100 text-xl font-semibold font-lexend mb-4">Supports Multiple Outputs</div>
+            <div className="text-zinc-400 text-base font-normal font-lexend leading-relaxed mb-8">Generate video tutorials, article content, and automated support responses effortlessly</div>
+            
+            {/* Output visualization */}
+            <div className="relative h-80 overflow-hidden">
+              {/* Top row outputs */}
+              <div className="absolute left-[153px] top-[147px] w-14 h-14 bg-stone-900 rounded-[5px] overflow-hidden">
+                <div className="w-3.5 h-5 left-[21px] top-[18px] absolute bg-white"></div>
+              </div>
+              <div className="absolute left-[340px] top-[147px] w-14 h-14 bg-stone-900 rounded-[5px] border border-violet-600 overflow-hidden">
+                <div className="w-3.5 h-5 left-[21px] top-[18px] absolute bg-white"></div>
+              </div>
+              
+              {/* Center output with glow */}
+              <div className="absolute left-[246px] top-[228px] w-14 h-14 bg-violet-600 rounded-[5px] overflow-hidden">
+                <div className="w-5 h-5 left-[19px] top-[19px] absolute bg-white"></div>
+              </div>
+              
+              {/* Bottom row outputs */}
+              <div className="absolute left-[82px] top-[222px] w-14 h-14 bg-stone-900 rounded-[5px] overflow-hidden">
+                <div className="w-5 h-5 left-[19px] top-[18px] absolute bg-white"></div>
+              </div>
+              <div className="absolute left-[404px] top-[222px] w-14 h-14 bg-stone-900 rounded-[5px] overflow-hidden">
+                <div className="w-4 h-4 left-[20px] top-[19px] absolute bg-white"></div>
+              </div>
+              
+              <div className="absolute left-[153px] top-[322px] w-14 h-14 bg-stone-900 rounded-[5px] overflow-hidden">
+                <div className="w-5 h-3.5 left-[18px] top-[21px] absolute bg-white"></div>
+              </div>
+              <div className="absolute left-[340px] top-[322px] w-14 h-14 bg-stone-900 rounded-[5px] overflow-hidden">
+                <div className="w-5 h-5 left-[19px] top-[19px] absolute bg-white"></div>
+              </div>
+              
+              {/* Connection lines */}
+              <div className="absolute left-[182px] top-[203px] w-0 h-28 border-l border-zinc-400"></div>
+              <div className="absolute left-[369px] top-[204px] w-0 h-28 border-l border-zinc-400"></div>
+              <div className="absolute left-[369px] top-[204px] w-0 h-9 border-l border-violet-600 shadow-[0px_4px_4px_0px_rgba(124,59,237,1.00)]"></div>
+              <div className="absolute left-[210px] top-[175px] w-32 h-0 border-t border-zinc-400"></div>
+              <div className="absolute left-[210px] top-[349px] w-32 h-0 border-t border-zinc-400"></div>
+            </div>
+          </div>
+        </div>
+
+        {/* Three Feature Cards Section */}
+        <div className="px-4 md:px-10 flex flex-col lg:flex-row gap-8 mb-24">
+          {/* See Every Decision */}
+          <div className="flex-1 bg-stone-950 p-8 rounded-xl border border-zinc-800">
+            <div className="text-neutral-100 text-xl font-semibold font-lexend mb-4">See Every Decision</div>
+            <div className="text-zinc-400 text-base font-normal font-lexend leading-relaxed mb-8">Understand how and why each decision was made with transparent, human-readable reasoning logs</div>
+            
+            {/* Decision log visualization */}
+            <div className="relative h-96 overflow-hidden">
+              <div className="w-72 h-[562px] left-[174px] top-[192px] absolute bg-neutral-900"></div>
+              <div className="w-36 h-6 left-[202px] top-[215px] absolute text-neutral-50 text-sm font-semibold font-inter leading-normal">Video Creation Agent</div>
+              
+              {/* Decision steps */}
+              <div className="left-[229px] top-[254px] absolute text-white text-xs font-normal font-inter leading-none">Inputs</div>
+              <div className="left-[229px] top-[353px] absolute text-white text-xs font-normal font-inter leading-none">Preprocessing</div>
+              <div className="left-[229px] top-[414px] absolute text-white text-xs font-normal font-inter leading-none">Preprocessing</div>
+              <div className="left-[229px] top-[475px] absolute text-white text-xs font-normal font-inter leading-none">Options Considered</div>
+              <div className="left-[229px] top-[536px] absolute text-white text-xs font-normal font-inter leading-none">Rejected Options</div>
+              <div className="left-[229px] top-[597px] absolute text-white text-xs font-normal font-inter leading-none">Outputs</div>
+              
+              {/* Timeline dots */}
+              <div className="w-2 h-2 left-[206px] top-[259px] absolute bg-zinc-400"></div>
+              <div className="w-2 h-2 left-[206px] top-[355px] absolute bg-zinc-400"></div>
+              <div className="w-2 h-2 left-[206px] top-[417px] absolute bg-zinc-400"></div>
+              <div className="w-2 h-2 left-[206px] top-[478px] absolute bg-zinc-400"></div>
+              <div className="w-2 h-2 left-[206px] top-[539px] absolute bg-zinc-400"></div>
+              <div className="w-2 h-2 left-[206px] top-[600px] absolute bg-zinc-400"></div>
+              
+              {/* Timeline line */}
+              <div className="w-px h-80 left-[210px] top-[266px] absolute border-l border-zinc-400"></div>
+            </div>
+          </div>
+
+          {/* Configure Every Detail */}
+          <div className="flex-1 bg-stone-950 p-8 rounded-xl border border-zinc-800">
+            <div className="text-neutral-100 text-xl font-semibold font-lexend mb-4">Configure Every Detail</div>
+            <div className="text-zinc-400 text-base font-normal font-lexend leading-relaxed">Adjust data, models, thresholds, and actions so your agents behave exactly as you want</div>
+          </div>
+
+          {/* Multi-Agent Intelligence */}
+          <div className="flex-1 bg-stone-950 p-8 rounded-xl border border-zinc-800">
+            <div className="text-neutral-100 text-xl font-semibold font-lexend mb-4">Multi-Agent Intelligence</div>
+            <div className="text-zinc-400 text-base font-normal font-lexend leading-relaxed">Divide work across specialized agents</div>
+          </div>
+        </div>
+
+
       </div>
     </div>
   );
