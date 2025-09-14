@@ -416,46 +416,16 @@ export default function LandingPage() {
           </div>
 
           {/* Supports Multiple Outputs */}
-          <div className="flex-1 bg-stone-950 p-8 rounded-xl border border-zinc-800">
-            <div className="text-neutral-100 text-xl font-semibold font-lexend mb-4">Supports Multiple Outputs</div>
-            <div className="text-zinc-400 text-base font-normal font-lexend leading-relaxed mb-8">Generate video tutorials, article content, and automated support responses effortlessly</div>
+          <div className="flex-1 bg-stone-950 p-8 rounded-xl border border-zinc-800 min-h-[400px] flex flex-col justify-center items-center">
+            <div className="text-neutral-100 text-xl font-semibold font-lexend mb-4 self-start">Supports Multiple Outputs</div>
+            <div className="text-zinc-400 text-base font-normal font-lexend leading-relaxed mb-8 self-start">Generate video tutorials, article content, and automated support responses effortlessly</div>
             
-            {/* Output visualization */}
-            <div className="relative h-80 overflow-hidden">
-              {/* Top row outputs */}
-              <div className="absolute left-[153px] top-[147px] w-14 h-14 bg-stone-900 rounded-[5px] overflow-hidden">
-                <div className="w-3.5 h-5 left-[21px] top-[18px] absolute bg-white"></div>
-              </div>
-              <div className="absolute left-[340px] top-[147px] w-14 h-14 bg-stone-900 rounded-[5px] border border-violet-600 overflow-hidden">
-                <div className="w-3.5 h-5 left-[21px] top-[18px] absolute bg-white"></div>
-              </div>
-              
-              {/* Center output with glow */}
-              <div className="absolute left-[246px] top-[228px] w-14 h-14 bg-violet-600 rounded-[5px] overflow-hidden">
-                <div className="w-5 h-5 left-[19px] top-[19px] absolute bg-white"></div>
-              </div>
-              
-              {/* Bottom row outputs */}
-              <div className="absolute left-[82px] top-[222px] w-14 h-14 bg-stone-900 rounded-[5px] overflow-hidden">
-                <div className="w-5 h-5 left-[19px] top-[18px] absolute bg-white"></div>
-              </div>
-              <div className="absolute left-[404px] top-[222px] w-14 h-14 bg-stone-900 rounded-[5px] overflow-hidden">
-                <div className="w-4 h-4 left-[20px] top-[19px] absolute bg-white"></div>
-              </div>
-              
-              <div className="absolute left-[153px] top-[322px] w-14 h-14 bg-stone-900 rounded-[5px] overflow-hidden">
-                <div className="w-5 h-3.5 left-[18px] top-[21px] absolute bg-white"></div>
-              </div>
-              <div className="absolute left-[340px] top-[322px] w-14 h-14 bg-stone-900 rounded-[5px] overflow-hidden">
-                <div className="w-5 h-5 left-[19px] top-[19px] absolute bg-white"></div>
-              </div>
-              
-              {/* Connection lines */}
-              <div className="absolute left-[182px] top-[203px] w-0 h-28 border-l border-zinc-400"></div>
-              <div className="absolute left-[369px] top-[204px] w-0 h-28 border-l border-zinc-400"></div>
-              <div className="absolute left-[369px] top-[204px] w-0 h-9 border-l border-violet-600 shadow-[0px_4px_4px_0px_rgba(124,59,237,1.00)]"></div>
-              <div className="absolute left-[210px] top-[175px] w-32 h-0 border-t border-zinc-400"></div>
-              <div className="absolute left-[210px] top-[349px] w-32 h-0 border-t border-zinc-400"></div>
+            <div className="flex-1 flex justify-center items-center">
+              <img
+                src="/Support.png"
+                alt="Support visualization"
+                className="max-w-[90%] max-h-[90%] object-contain"
+              />
             </div>
           </div>
         </div>
@@ -469,7 +439,7 @@ export default function LandingPage() {
             
             
             {/* Decision.png image in bottom right corner */}
-            <div className="absolute bottom-0 right-0 transform translate-x-1/4 translate-y-1/4">
+            <div className="absolute bottom-0 right-0 transform translate-x-1/5 translate-y-1/4">
               <img
                 src="/Decision.png"
                 alt="Decision visualization"
@@ -485,7 +455,7 @@ export default function LandingPage() {
             <div className="text-neutral-100 text-xl font-semibold font-lexend mb-4">Configure Every Detail</div>
             <div className="text-zinc-400 text-base font-normal font-lexend leading-relaxed mb-8">Adjust data, models, thresholds, and actions so your agents behave exactly as you want</div>
             
-            <div className="space-y-8 w-[70%] self-center place-self-center mb-10">
+            <div className="space-y-8 w-[70%] self-center place-self-center mt-15">
               {/* Configure Threshold - Functional Slider */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -569,9 +539,17 @@ export default function LandingPage() {
           </div>
 
           {/* Multi-Agent Intelligence */}
-          <div className="flex-1 bg-stone-950 p-8 rounded-xl border border-zinc-800 min-h-[400px]">
-            <div className="text-neutral-100 text-xl font-semibold font-lexend mb-4">Multi-Agent Intelligence</div>
-            <div className="text-zinc-400 text-base font-normal font-lexend leading-relaxed">Divide work across specialized agents</div>
+          <div className="flex-1 bg-stone-950 p-8 rounded-xl border border-zinc-800 min-h-[400px] flex flex-col justify-center items-center">
+            <div className="text-neutral-100 text-xl font-semibold font-lexend mb-4 self-start">Multi-Agent Intelligence</div>
+            <div className="text-zinc-400 text-base font-normal font-lexend leading-relaxed mb-8 self-start">Divide work across specialized agents</div>
+            
+            <div className="flex-1 flex justify-center items-center">
+              <img
+                src="/Multi.png"
+                alt="Multi-agent visualization"
+                className="max-w-[90%] max-h-[90%] object-contain"
+              />
+            </div>
           </div>
         </div>
 
