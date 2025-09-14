@@ -9,12 +9,14 @@ export default function WorkflowBuilder({ createdRepoName, blocks, setBlocks, co
   const [selectedBlock, setSelectedBlock] = useState(null);
 
   return (
-    <div className="flex h-full">
+    <div className="flex h-full overflow-hidden">
       {/* Left Sidebar - Blocks */}
-      <BlocksSidebar />
+      <div className="flex-shrink-0">
+        <BlocksSidebar />
+      </div>
       
       {/* Center - Canvas */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <div className="bg-stone-900 border-b border-zinc-800 flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-neutral-800 rounded flex items-center justify-center">

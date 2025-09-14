@@ -11,7 +11,7 @@ export default function MainContent() {
   const [connections, setConnections] = useState([]); // Array of {fromBlockId, toBlockId, type: 'agent-to-tool' | 'agent-to-agent'}
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full overflow-hidden">
       {/* Header */}
       <WorkflowHeader blocks={blocks} />
 
@@ -19,7 +19,7 @@ export default function MainContent() {
       <TitleSection onRepoCreated={setCreatedRepoName} />
 
       {/* Workflow Builder */}
-      <div className="flex-1 min-h-0">
+      <div className="flex-1 min-h-0 overflow-hidden">
         <WorkflowBuilder
           createdRepoName={createdRepoName}
           blocks={blocks}
