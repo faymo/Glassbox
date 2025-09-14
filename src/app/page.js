@@ -1,11 +1,11 @@
-import MainContent from '@/components/MainContent';
+import OverviewPage from '@/components/OverviewPage';
 
 export default function HomePage() {
   return (
-    <div className="w-screen h-screen bg-neutral-900 flex flex-col">
-      {/* Main Content Area - Client Component with state management */}
+    <div className="w-screen h-screen bg-stone-950 flex flex-col">
+      {/* Overview Page */}
       <div className="flex-1 min-h-0">
-        <MainContent />
+        <OverviewPage />
       </div>
     </div>
   );
