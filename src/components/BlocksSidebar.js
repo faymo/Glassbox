@@ -59,6 +59,7 @@ export default function BlocksSidebar() {
   const [activeTab, setActiveTab] = useState('blocks');
   const [uploadedDocuments, setUploadedDocuments] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleDragStart = (e, block) => {
     setDraggedBlock(block);
@@ -147,6 +148,48 @@ export default function BlocksSidebar() {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(link.href);
+  };
+
+  const handleSubmitDocuments = async () => {
+    if (uploadedDocuments.length === 0) return;
+
+    setIsSubmitting(true);
+
+    try {
+      const uploadUrl = process.env.NEXT_PUBLIC_AGENT_UPLOAD_URL;
+      
+      if (!uploadUrl) {
+        alert('Agent upload API URL not configured. Please check your environment variables.');
+        return;
+      }
+
+      // Upload each document
+      for (const doc of uploadedDocuments) {
+        const formData = new FormData();
+        formData.append('file', doc.file);
+
+        const response = await fetch(uploadUrl, {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Failed to upload ${doc.name}: ${errorText}`);
+        }
+
+        console.log(`Successfully uploaded: ${doc.name}`);
+        console.log(await response.json());
+      }
+
+      alert('All documents uploaded successfully!');
+      
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert(`Upload failed: ${error.message}`);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const getIconColor = (color) => {
@@ -273,7 +316,7 @@ export default function BlocksSidebar() {
           {uploadedDocuments.length > 0 && (
             <div className="w-80 left-[18px] top-[300px] absolute">
               <div className="text-white text-sm font-medium font-lexend mb-3">Uploaded Documents</div>
-              <div className="space-y-2 max-h-96 overflow-y-auto">
+              <div className="space-y-2 max-h-80 overflow-y-auto">
                 {uploadedDocuments.map((doc) => (
                   <div key={doc.id} className="w-full bg-neutral-900 rounded-md outline outline-offset-[-1px] outline-zinc-800 p-3 flex items-center justify-between hover:bg-neutral-800 transition-colors cursor-pointer group">
                     <div 
@@ -328,6 +371,34 @@ export default function BlocksSidebar() {
                     </div>
                   </div>
                 ))}
+              </div>
+              
+              {/* Submit Documents Button */}
+              <div className="mt-4">
+                <button
+                  onClick={handleSubmitDocuments}
+                  disabled={uploadedDocuments.length === 0 || isSubmitting}
+                  className={`w-full h-10 rounded-md flex items-center justify-center gap-2 transition-colors font-medium text-sm font-lexend ${
+                    uploadedDocuments.length > 0 && !isSubmitting
+                      ? 'bg-violet-600 hover:bg-violet-700 text-white cursor-pointer'
+                      : 'bg-neutral-800 text-zinc-500 cursor-not-allowed'
+                  }`}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Uploading...
+                    </>
+                  ) : (
+                    <>
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8 1V11M8 1L4 5M8 1L12 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M1 13V14C1 14.2652 1.10536 14.5196 1.29289 14.7071C1.48043 14.8946 1.73478 15 2 15H14C14.2652 15 14.5196 14.8946 14.7071 14.7071C14.8946 14.5196 15 14.2652 15 14V13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      Submit Documents
+                    </>
+                  )}
+                </button>
               </div>
             </div>
           )}

@@ -16,6 +16,7 @@ const configurationViews = {
     title: 'Agent Block',
     fields: [
       { label: 'Node ID', type: 'text', key: 'nodeId' },
+      { label: 'Node Type', type: 'text', key: 'nodeType' },
       { label: 'System Prompt', type: 'textarea', key: 'systemPrompt' },
       { label: 'Description', type: 'textarea', key: 'description' },
       { label: 'API Key', type: 'text', key: 'apiKey' },
@@ -31,14 +32,14 @@ const configurationViews = {
             type: "GET",
             workflowId: `wf_${shortId}`,
             nodeId: `get_code_documentation`,
-            description: `Data retrieval for ${formData.description || '\"\"\"public code documentation\"\"\"'}`,
+            description: `\"\"\"Data retrieval for ${formData.description || 'public code documentation\"\"\"'}`,
             url: `https://raw.githubusercontent.com/facebook/react/main/README.md`,
             authToken: ``,
             parameters: [],
             searchParams: {}
           },
           {
-            type: "Decision",
+            type: formData.nodeType || "DecisionText",
             workflowId: `wf_${shortId}`,
             nodeId: formData.nodeId || `scraper`,
             systemPrompt: formData.systemPrompt || "You are a Senior Software Engineer.",
