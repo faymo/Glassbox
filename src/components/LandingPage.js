@@ -9,6 +9,12 @@ import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slide
 export default function LandingPage() {
   const [droppedBlocks, setDroppedBlocks] = useState([]);
   const [dragOver, setDragOver] = useState(false);
+  
+  // Configuration states
+  const [threshold, setThreshold] = useState(80);
+  const [retryCount, setRetryCount] = useState('');
+  const [fallbackStrategy, setFallbackStrategy] = useState('Ask for approval');
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
     const updateVerticalLines = () => {
@@ -83,10 +89,10 @@ export default function LandingPage() {
       {/* Header */}
       <div className="w-full h-16 bg-neutral-900 flex items-center px-4 md:px-10 relative z-20">
         <div className="flex items-center gap-2">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg width="24" height="24" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M0.0534668 1.96411C1.27163 0.339895 2.49312 -0.185474 4.50464 0.0559082C5.4907 0.866672 6.00673 1.38443 6.41187 2.59985C6.42443 3.3415 6.42586 4.08382 6.41187 4.82544H9.59155C9.55877 4.3861 9.52572 3.94606 9.49194 3.49341C9.49917 2.34749 9.56091 2.01012 10.2068 1.01001C11.4734 0.182838 12.5301 -0.119263 14.0417 0.0559082C15.0636 0.694586 15.4839 1.18451 15.8533 2.33423C15.9949 3.10451 16.0485 3.72959 15.95 4.50708C15.1574 5.5638 14.6561 5.99761 13.406 6.41431C12.6644 6.42687 11.922 6.4283 11.1804 6.41431V9.59399C11.6198 9.56121 12.0598 9.52816 12.5125 9.49438C13.6585 9.50161 13.9956 9.56419 14.9958 10.2102C15.8231 11.4769 16.1252 12.5333 15.95 14.0452C15.3114 15.0669 14.822 15.4863 13.6726 15.8557C12.9021 15.9974 12.2765 16.051 11.4988 15.9524C10.4422 15.16 10.0082 14.6593 9.59155 13.4094C9.57898 12.6677 9.57756 11.9255 9.59155 11.1838H6.41187C6.44465 11.6231 6.4777 12.0623 6.51147 12.5149C6.50425 13.6612 6.44175 13.9989 5.79565 14.9993C4.52907 15.8264 3.47248 16.1277 1.96069 15.9524C0.939007 15.3138 0.519515 14.8246 0.150146 13.675C0.00841106 12.9045 -0.0451541 12.2789 0.0534668 11.5012C0.845802 10.4448 1.34667 10.0106 2.59644 9.59399C3.33809 9.58142 4.08039 9.58 4.82202 9.59399V6.41431C4.38277 6.44709 3.94353 6.48014 3.49097 6.51392C2.34485 6.5067 2.00759 6.44487 1.00757 5.79907C0.185986 4.54102 -0.137187 3.46812 0.0534668 1.96411ZM4.82202 11.1838C3.4589 11.1324 2.80092 11.0472 1.64233 11.8196C1.49058 13.0032 1.59909 13.3436 2.27905 14.3635C3.16829 14.5003 3.66323 14.4833 4.44409 14.0256C4.93696 13.2215 4.93734 13.2212 4.82202 11.1838ZM12.4138 11.1243C11.9951 11.1445 11.5888 11.1642 11.1824 11.1838C11.1309 12.5468 11.046 13.2042 11.8181 14.3625C12.6129 14.4619 12.6131 14.4619 13.408 14.3625C14.0434 13.7271 14.0436 13.727 14.282 12.9524C14.3615 12.1377 14.3612 12.1376 13.7253 11.1838C13.5152 11.1522 13.3112 11.1218 13.1072 11.0911C12.7573 11.108 12.7568 11.1077 12.4138 11.1243ZM6.41187 9.59399H9.59155V6.41431H6.41187V9.59399ZM4.18628 1.64575C3.00268 1.69725 2.34469 1.78243 1.18611 1.00997C1.03436 2.19357 1.14287 2.53398 1.82283 3.55384C2.71207 3.69063 3.20701 3.67361 3.98787 3.21594C4.48074 2.41185 4.48112 2.41155 4.36579 0.374146C4.31429 0.792637 4.26316 1.21896 4.18628 1.64575ZM11.1804 4.82544V1.64575C12.5435 1.69725 13.2015 1.78243 14.3601 1.00997C14.5118 2.19357 14.4033 2.53398 13.7234 3.55384C12.8341 3.69063 12.3392 3.67361 11.5583 3.21594C11.0655 2.41185 11.0651 2.41155 11.1804 0.374146V4.82544Z" fill="#7c3aed"/>
           </svg>
-          <div className="text-white text-lg font-light italic font-lexend">
+          <div className="text-white text-2xl font-light italic font-lexend">
             Glassbox
           </div>
         </div>
@@ -477,7 +483,89 @@ export default function LandingPage() {
           {/* Configure Every Detail */}
           <div className="flex-1 bg-stone-950 p-8 rounded-xl border border-zinc-800 min-h-[400px]">
             <div className="text-neutral-100 text-xl font-semibold font-lexend mb-4">Configure Every Detail</div>
-            <div className="text-zinc-400 text-base font-normal font-lexend leading-relaxed">Adjust data, models, thresholds, and actions so your agents behave exactly as you want</div>
+            <div className="text-zinc-400 text-base font-normal font-lexend leading-relaxed mb-8">Adjust data, models, thresholds, and actions so your agents behave exactly as you want</div>
+            
+            <div className="space-y-8 w-[70%] self-center place-self-center mb-10">
+              {/* Configure Threshold - Functional Slider */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="text-white text-sm font-medium font-inter">Configure Threshold</label>
+                  <span className="text-white text-xs font-normal font-inter">{threshold}%</span>
+                </div>
+                <div className="relative">
+                  <div className="w-full h-2 bg-zinc-800 rounded-full">
+                    <div 
+                      className="h-2 bg-violet-600 rounded-full transition-all duration-200" 
+                      style={{ width: `${threshold}%` }}
+                    />
+                  </div>
+                  <div 
+                    className="w-4 h-4 absolute top-[-4px] bg-neutral-900 rounded-full border-[1.27px] border-violet-600 cursor-pointer transition-all duration-200 hover:scale-110"
+                    style={{ left: `calc(${threshold}% - 8px)` }}
+                    onMouseDown={(e) => {
+                      const slider = e.currentTarget.previousElementSibling.querySelector('.bg-zinc-800');
+                      const rect = slider.getBoundingClientRect();
+                      const handleMouseMove = (e) => {
+                        const x = e.clientX - rect.left;
+                        const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
+                        setThreshold(Math.round(percentage));
+                      };
+                      const handleMouseUp = () => {
+                        document.removeEventListener('mousemove', handleMouseMove);
+                        document.removeEventListener('mouseup', handleMouseUp);
+                      };
+                      document.addEventListener('mousemove', handleMouseMove);
+                      document.addEventListener('mouseup', handleMouseUp);
+                    }}
+                  />
+                </div>
+              </div>
+              
+              {/* Retry Logic - Functional Input */}
+              <div className="space-y-3">
+                <label className="text-white text-sm font-medium font-inter">Retry Logic</label>
+                <div className="w-full h-9 bg-zinc-800 rounded">
+                  <input
+                    type="number"
+                    value={retryCount}
+                    onChange={(e) => setRetryCount(e.target.value)}
+                    placeholder="Enter a number..."
+                    className="w-full h-full bg-transparent text-white text-sm font-normal font-inter px-4 outline-none placeholder-zinc-400 rounded"
+                  />
+                </div>
+              </div>
+              
+              {/* Fallback Strategy - Functional Dropdown */}
+              <div className="space-y-3">
+                <label className="text-white text-sm font-medium font-inter">Fallback Strategy</label>
+                <div className="relative">
+                  <button
+                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                    className="w-full h-9 bg-zinc-800 rounded flex items-center justify-between px-4 text-white text-sm font-normal font-inter outline-none hover:bg-zinc-700 transition-colors"
+                  >
+                    <span>{fallbackStrategy}</span>
+                    <div className={`w-3 h-2 bg-white transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} 
+                         style={{ clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' }} />
+                  </button>
+                  {dropdownOpen && (
+                    <div className="absolute top-full left-0 w-full bg-zinc-800 border border-zinc-700 rounded mt-1 z-10 shadow-lg">
+                      {['Ask for approval', 'Retry automatically', 'Skip and continue', 'Stop execution'].map((option) => (
+                        <button
+                          key={option}
+                          onClick={() => {
+                            setFallbackStrategy(option);
+                            setDropdownOpen(false);
+                          }}
+                          className="w-full px-4 py-3 text-left text-white text-sm font-normal font-inter hover:bg-zinc-700 transition-colors first:rounded-t last:rounded-b"
+                        >
+                          {option}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Multi-Agent Intelligence */}
