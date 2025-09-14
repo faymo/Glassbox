@@ -5,7 +5,7 @@ import BlocksSidebar from '@/components/BlocksSidebar';
 import WorkflowCanvas from '@/components/WorkflowCanvas';
 import Configuration from '@/components/Configuration';
 
-export default function WorkflowBuilder({ createdRepoName, blocks, setBlocks }) {
+export default function WorkflowBuilder({ createdRepoName, blocks, setBlocks, connections, setConnections }) {
   const [selectedBlock, setSelectedBlock] = useState(null);
 
   return (
@@ -52,11 +52,13 @@ export default function WorkflowBuilder({ createdRepoName, blocks, setBlocks }) 
         
         {/* Canvas Area */}
         <div className="flex-1 p-4 min-h-0">
-          <WorkflowCanvas 
+          <WorkflowCanvas
             blocks={blocks}
             setBlocks={setBlocks}
             selectedBlock={selectedBlock}
             setSelectedBlock={setSelectedBlock}
+            connections={connections}
+            setConnections={setConnections}
           />
         </div>
       </div>

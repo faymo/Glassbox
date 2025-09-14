@@ -319,13 +319,11 @@ export default function Configuration({ selectedBlock, createdRepoName, blocks }
   return (
     <div className="w-96 h-full flex flex-col bg-stone-950 border-l border-zinc-800 overflow-hidden">
       {/* Header */}
-      <div className="flex-shrink-0 px-4 pt-12">
-        <div className="text-center text-white text-base font-semibold font-lexend leading-none mb-2">
-          Configuration
-        </div>
-        <div className="text-center text-zinc-400 text-sm font-normal font-lexend leading-none mb-6">
-          {selectedBlock ? `Configure ${config?.title || 'block'}` : 'Select a block to configure'}
-        </div>
+      <div className="flex-shrink-0 p-5">
+        <h2 className="text-white text-base font-semibold mb-2">Configuration</h2>
+        <p className="text-zinc-400 text-sm mb-6">
+          {selectedBlock ? `Configure ${config?.title || 'Block'}` : 'Select a block to configure'}
+        </p>
 
         {/* Tab Switcher */}
         <div className="flex bg-stone-900 rounded-md p-1 mb-6">

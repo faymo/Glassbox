@@ -6,7 +6,9 @@ export default function TitleSection({ onRepoCreated }) {
   const [repoName, setRepoName] = useState('');
   const [isCreatingRepo, setIsCreatingRepo] = useState(false);
   const [isSettingKey, setIsSettingKey] = useState(false);
+  const [isCreatingDroplet, setIsCreatingDroplet] = useState(false);
   const [createdRepoName, setCreatedRepoName] = useState('');
+  const [dropletId, setDropletId] = useState('');
 
   // Create repository function
   const handleCreateRepo = async () => {
@@ -103,7 +105,7 @@ export default function TitleSection({ onRepoCreated }) {
         return;
       }
 
-      // Set DROPLET_IP
+      // Set DROPLET_IP (using dropletId if available, otherwise fallback to env value)
       const dropletIpResponse = await fetch(setKeyApiUrl, {
         method: 'POST',
         headers: {
@@ -111,7 +113,7 @@ export default function TitleSection({ onRepoCreated }) {
         },
         body: JSON.stringify({
           repo: createdRepoName,
-          keyValue: dropletIpValue,
+          keyValue: dropletId || dropletIpValue,
           keyName: "DROPLET_IP"
         }),
       });
@@ -127,6 +129,82 @@ export default function TitleSection({ onRepoCreated }) {
       alert(`Network error: ${error.message}`);
     } finally {
       setIsSettingKey(false);
+    }
+  };
+
+  // Create droplet function
+  const handleCreateDroplet = async () => {
+    setIsCreatingDroplet(true);
+
+    try {
+      const createDropletApiUrl = process.env.NEXT_PUBLIC_CREATE_DROPLET_API_URL;
+      const getDropletApiUrl = process.env.NEXT_PUBLIC_GET_DROPLET_API_URL;
+
+      if (!createDropletApiUrl || !getDropletApiUrl) {
+        alert('Droplet API URLs not configured. Please check your environment variables.');
+        return;
+      }
+
+      if (!createdRepoName) {
+        alert('Please create a repository first before creating a droplet.');
+        return;
+      }
+
+      console.log('Creating droplet for repository:', createdRepoName);
+
+      const createDropletPayload = {
+        name: "HTN",
+        userName: "BaronLiu1993",
+        repoName: createdRepoName,
+        postgresUser: "demo",
+        postgresPassword: "demo123"
+      };
+
+      const response = await fetch(createDropletApiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(createDropletPayload),
+      });
+
+      const result = await response.json();
+
+      console.log('Create Droplet API Response:', result);
+
+      if (response.ok && result.success) {
+        console.log('Droplet created successfully, now getting droplet details...');
+
+        // Chain the get-droplet API call
+        const getDropletResponse = await fetch(getDropletApiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            dropletId: result.dropletId.toString()
+          }),
+        });
+
+        const getDropletResult = await getDropletResponse.json();
+
+        console.log('Get Droplet API Response:', getDropletResult);
+
+        if (getDropletResponse.ok) {
+          setDropletId(result.dropletId.toString());
+          alert(`Droplet created and retrieved successfully! Droplet ID: ${result.dropletId}`);
+        } else {
+          alert(`Droplet created but failed to retrieve details: ${getDropletResult.message || 'Unknown error'}`);
+        }
+      } else {
+        console.error('Create Droplet API Error:', result);
+        alert(`Error creating droplet: ${result.message || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error('Network Error:', error);
+      alert(`Network error: ${error.message}`);
+    } finally {
+      setIsCreatingDroplet(false);
     }
   };
 
@@ -165,6 +243,28 @@ export default function TitleSection({ onRepoCreated }) {
                 <path d="M6 0C2.7 0 0 2.7 0 6C0 9.3 2.7 12 6 12C9.3 12 12 9.3 12 6C12 2.7 9.3 0 6 0ZM9 6.6H6.6V9H5.4V6.6H3V5.4H5.4V3H6.6V5.4H9V6.6Z" fill="white"/>
               </svg>
               <span className="text-white text-sm font-medium">Create Repo</span>
+            </>
+          )}
+        </button>
+
+        {/* Create Droplet Button */}
+        <button
+          onClick={handleCreateDroplet}
+          disabled={isCreatingDroplet || !createdRepoName}
+          className="w-38 h-9 bg-orange-600 hover:bg-orange-700 disabled:bg-orange-800 disabled:cursor-not-allowed rounded-md flex items-center gap-2 px-4 transition-colors"
+        >
+          {isCreatingDroplet ? (
+            <>
+              <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <span className="text-white text-sm font-medium">Creating...</span>
+            </>
+          ) : (
+            <>
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 1C3.79 1 2 2.79 2 5C2 7.21 3.79 9 6 9C8.21 9 10 7.21 10 5C10 2.79 8.21 1 6 1ZM7 5.5H6.5V6C6.5 6.28 6.28 6.5 6 6.5C5.72 6.5 5.5 6.28 5.5 6V5.5H5C4.72 5.5 4.5 5.28 4.5 5C4.5 4.72 4.72 4.5 5 4.5H5.5V4C5.5 3.72 5.72 3.5 6 3.5C6.28 3.5 6.5 3.72 6.5 4V4.5H7C7.28 4.5 7.5 4.72 7.5 5C7.5 5.28 7.28 5.5 7 5.5Z" fill="white"/>
+                <path d="M1 11H11V10H1V11Z" fill="white"/>
+              </svg>
+              <span className="text-white text-sm font-medium">Create Droplet</span>
             </>
           )}
         </button>

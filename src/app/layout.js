@@ -7,7 +7,7 @@ const lexend = Lexend({
 });
 
 export const metadata = {
-  title: "AI Agent Infrastructure Platform",
+  title: "Glassbox",
   description: "Deploy, manage, and scale AI agents with enterprise-grade infrastructure",
 };
 
