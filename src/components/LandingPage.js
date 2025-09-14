@@ -115,10 +115,10 @@ export default function LandingPage() {
         </div>
 
         {/* Get Started Button */}
-        <div className="mt-8 relative h-12 z-10">
+        <div className="mt-8 px-4 md:px-10 relative h-12 z-10">
           <Link href="/overview">
-            <div className="absolute left-0 w-[255px] h-12 overflow-hidden bg-violet-600">
-              <div className="w-24 h-5 left-[16px] top-[16.40px] absolute text-white text-base font-normal leading-none">Get Started</div>
+            <div className="w-[255px] h-12 overflow-hidden bg-violet-600 relative flex items-center">
+              <div className="ml-4 text-white text-base font-normal leading-none">Get Started</div>
               <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M6 12L10 8L6 4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -553,6 +553,14 @@ export default function LandingPage() {
           </div>
         </div>
 
+        {/* Footer Image */}
+        <div className="w-full">
+          <img
+            src="/Footer.png"
+            alt="Footer"
+            className="w-full h-auto object-cover"
+          />
+        </div>
 
       </div>
     </div>
