@@ -457,44 +457,31 @@ export default function LandingPage() {
         {/* Three Feature Cards Section */}
         <div className="px-4 md:px-10 flex flex-col lg:flex-row gap-8 mb-24">
           {/* See Every Decision */}
-          <div className="flex-1 bg-stone-950 p-8 rounded-xl border border-zinc-800">
+          <div className="flex-1 bg-stone-950 p-8 rounded-xl border border-zinc-800 relative overflow-hidden min-h-[400px]">
             <div className="text-neutral-100 text-xl font-semibold font-lexend mb-4">See Every Decision</div>
             <div className="text-zinc-400 text-base font-normal font-lexend leading-relaxed mb-8">Understand how and why each decision was made with transparent, human-readable reasoning logs</div>
             
-            {/* Decision log visualization */}
-            <div className="relative h-96 overflow-hidden">
-              <div className="w-72 h-[562px] left-[174px] top-[192px] absolute bg-neutral-900"></div>
-              <div className="w-36 h-6 left-[202px] top-[215px] absolute text-neutral-50 text-sm font-semibold font-inter leading-normal">Video Creation Agent</div>
-              
-              {/* Decision steps */}
-              <div className="left-[229px] top-[254px] absolute text-white text-xs font-normal font-inter leading-none">Inputs</div>
-              <div className="left-[229px] top-[353px] absolute text-white text-xs font-normal font-inter leading-none">Preprocessing</div>
-              <div className="left-[229px] top-[414px] absolute text-white text-xs font-normal font-inter leading-none">Preprocessing</div>
-              <div className="left-[229px] top-[475px] absolute text-white text-xs font-normal font-inter leading-none">Options Considered</div>
-              <div className="left-[229px] top-[536px] absolute text-white text-xs font-normal font-inter leading-none">Rejected Options</div>
-              <div className="left-[229px] top-[597px] absolute text-white text-xs font-normal font-inter leading-none">Outputs</div>
-              
-              {/* Timeline dots */}
-              <div className="w-2 h-2 left-[206px] top-[259px] absolute bg-zinc-400"></div>
-              <div className="w-2 h-2 left-[206px] top-[355px] absolute bg-zinc-400"></div>
-              <div className="w-2 h-2 left-[206px] top-[417px] absolute bg-zinc-400"></div>
-              <div className="w-2 h-2 left-[206px] top-[478px] absolute bg-zinc-400"></div>
-              <div className="w-2 h-2 left-[206px] top-[539px] absolute bg-zinc-400"></div>
-              <div className="w-2 h-2 left-[206px] top-[600px] absolute bg-zinc-400"></div>
-              
-              {/* Timeline line */}
-              <div className="w-px h-80 left-[210px] top-[266px] absolute border-l border-zinc-400"></div>
+            
+            {/* Decision.png image in bottom right corner */}
+            <div className="absolute bottom-0 right-0 transform translate-x-1/4 translate-y-1/4">
+              <img
+                src="/Decision.png"
+                alt="Decision visualization"
+                width={300}
+                height={300}
+                className="transition-transform duration-300 ease-in-out hover:-rotate-45"
+              />
             </div>
           </div>
 
           {/* Configure Every Detail */}
-          <div className="flex-1 bg-stone-950 p-8 rounded-xl border border-zinc-800">
+          <div className="flex-1 bg-stone-950 p-8 rounded-xl border border-zinc-800 min-h-[400px]">
             <div className="text-neutral-100 text-xl font-semibold font-lexend mb-4">Configure Every Detail</div>
             <div className="text-zinc-400 text-base font-normal font-lexend leading-relaxed">Adjust data, models, thresholds, and actions so your agents behave exactly as you want</div>
           </div>
 
           {/* Multi-Agent Intelligence */}
-          <div className="flex-1 bg-stone-950 p-8 rounded-xl border border-zinc-800">
+          <div className="flex-1 bg-stone-950 p-8 rounded-xl border border-zinc-800 min-h-[400px]">
             <div className="text-neutral-100 text-xl font-semibold font-lexend mb-4">Multi-Agent Intelligence</div>
             <div className="text-zinc-400 text-base font-normal font-lexend leading-relaxed">Divide work across specialized agents</div>
           </div>
