@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import LogIcon from './icons/Log.svg';
+import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider';
 
 export default function LandingPage() {
   const [droppedBlocks, setDroppedBlocks] = useState([]);
@@ -392,32 +393,19 @@ export default function LandingPage() {
             <div className="text-neutral-100 text-xl font-semibold font-lexend mb-4">Seamless No-Code & Code</div>
             <div className="text-zinc-400 text-base font-normal font-lexend leading-relaxed mb-8">Start with drag-and-drop blocks, then switch to code view when you want precision edits.</div>
             
-            {/* Workflow visualization */}
-            <div className="relative h-80 bg-stone-950 overflow-hidden">
-              <div className="absolute left-[180px] top-[132px] w-80 h-16 bg-neutral-900 rounded-lg shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] border border-zinc-800">
-                <div className="w-7 h-7 left-[36px] top-[18px] absolute bg-gray-900 rounded-md">
-                  <div className="w-2.5 h-3 left-[10px] top-[9px] absolute bg-blue-500"></div>
-                </div>
-                <div className="left-[79px] top-[23px] absolute text-white text-sm font-medium font-inter leading-tight">Start</div>
-              </div>
-              
-              <div className="absolute left-[182px] top-[200px] w-80 h-16 bg-neutral-900 rounded-lg shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] border border-zinc-800">
-                <div className="w-7 h-7 left-[36px] top-[18px] absolute bg-zinc-900 rounded-md">
-                  <div className="w-3.5 h-3 left-[8px] top-[8px] absolute bg-green-500"></div>
-                </div>
-                <div className="left-[79px] top-[23px] absolute text-white text-sm font-medium font-inter leading-tight">Video Creation</div>
-              </div>
-              
-              <div className="absolute left-[181px] top-[268px] w-80 h-16 bg-neutral-900 rounded-lg shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] border border-zinc-800">
-                <div className="w-7 h-7 left-[36px] top-[18px] absolute bg-gray-900 rounded-md">
-                  <div className="w-2.5 h-3 left-[10px] top-[9px] absolute bg-blue-500"></div>
-                </div>
-                <div className="left-[79px] top-[23px] absolute text-white text-sm font-medium font-inter leading-tight">End</div>
-              </div>
-              
-              {/* Vertical line with glow effect */}
-              <div className="absolute left-[357px] top-[111px] w-0 h-80 border-l-[3px] border-violet-600 blur-[10px]"></div>
-              <div className="absolute left-[357px] top-[111px] w-0 h-80 border-l-2 border-stone-900/0"></div>
+            {/* Compare visualization */}
+            <div className="flex justify-center">
+              <ReactCompareSlider
+                itemOne={<ReactCompareSliderImage src="/Left.png" alt="No-code view" />}
+                itemTwo={<ReactCompareSliderImage src="/Right.png" alt="Code view" />}
+                style={{
+                  height: '400px',
+                  width: '100%',
+                  maxWidth: '500px',
+                  borderRadius: '12px',
+                  border: '1px solid #27272a'
+                }}
+              />
             </div>
           </div>
 
